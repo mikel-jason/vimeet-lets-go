@@ -3,6 +3,7 @@ import { createAnimation } from '@ionic/core';
 import { Platform } from '@ionic/angular';
 
 import { v4 as uuidv4 } from 'uuid';
+import { VimeetServerService } from '../vimeet-server.service';
 
 interface IInstant {
     icon: string;
@@ -22,11 +23,15 @@ export class RoomPage implements OnInit {
     public readonly instantsAvailable = ['thumbs-up', 'thumbs-down'];
     public instants: IInstant[] = [];
 
-    constructor(private platform: Platform) {}
+    constructor(
+        private platform: Platform,
+        private vimeet: VimeetServerService
+    ) {}
 
     ngOnInit() {}
 
     public sendInstant(instant: string) {
+        this.vimeet.sendInstant(instant);
         this.showInstant(instant);
     }
 

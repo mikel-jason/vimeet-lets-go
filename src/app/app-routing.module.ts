@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
+    { path: '', redirectTo: 'join', pathMatch: 'full' },
     {
-        path: 'home',
+        path: 'join',
         loadChildren: () =>
-            import('./home/home.module').then((m) => m.HomePageModule),
+            import('./join/join.module').then((m) => m.JoinPageModule),
     },
     {
         path: 'room',

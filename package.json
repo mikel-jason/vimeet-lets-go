@@ -1,15 +1,22 @@
 {
   "name": "vimeet-lets-go",
   "version": "0.0.1",
-  "author": "Ionic Framework",
-  "homepage": "https://ionicframework.com/",
+  "author": "Mikel Muennekhoff, Julian Groshaupt",
+  "description": "Frontend using Vimeet Server for visual support in online meetings",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e"
+    "lint": "ng lint --fix; npm run prettier:write",
+    "e2e": "ng e2e",
+    "prettier:list": "prettier --list-different \"./{e2e,src}/**/*.{scss,ts}\"",
+    "prettier:write": "prettier --write \"./{e2e,src}/**/*.{scss,ts}\""
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "ng lint --silent; npm run prettier:list --silent"
+    }
   },
   "private": true,
   "dependencies": {
@@ -39,6 +46,7 @@
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~8.9.4",
     "codelyzer": "^5.0.0",
+    "husky": "^4.2.5",
     "jasmine-core": "~3.4.0",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~4.1.0",
@@ -46,10 +54,11 @@
     "karma-coverage-istanbul-reporter": "~2.0.1",
     "karma-jasmine": "~2.0.1",
     "karma-jasmine-html-reporter": "^1.4.0",
+    "prettier": "^2.0.4",
     "protractor": "~5.4.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.15.0",
+    "tslint-config-prettier": "^1.18.0",
     "typescript": "~3.4.3"
-  },
-  "description": "An Ionic project"
+  }
 }

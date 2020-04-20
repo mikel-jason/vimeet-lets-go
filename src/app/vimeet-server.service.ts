@@ -24,9 +24,9 @@ export class VimeetServerService {
 
     public connect(username: string, room: string) {
         this.ws = webSocket(
-            `ws://localhost:8080/ws/${encodeURIComponent(
-                room
-            )}/${encodeURIComponent(username)}/`
+            `${environment.vimeet_server_websocket_protocol}://${
+                environment.vimeet_server_base_uri
+            }/ws/${encodeURIComponent(room)}/${encodeURIComponent(username)}/`
         );
 
         this.ws.subscribe(

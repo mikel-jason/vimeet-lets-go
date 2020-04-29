@@ -33,7 +33,7 @@
 
         <ion-card-content>
             <app-expandable [expandHeight]="expandHeight" [expanded]="expandables.users">
-                Users go here
+                <ion-text *ngFor="let user of users" class="user">{{user.name}}</ion-text>
             </app-expandable>
         </ion-card-content>
     </ion-card>

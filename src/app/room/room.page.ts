@@ -11,6 +11,11 @@ interface IInstant {
     leftOffset: number;
 }
 
+interface IUser {
+    name: string;
+    elevated: boolean;
+}
+
 const ANIMATION_DURATION = 3000; // ms
 const ANIMATION_OFFSET = 200; // ms, offset to make sure element exists on play
 
@@ -22,6 +27,8 @@ const ANIMATION_OFFSET = 200; // ms, offset to make sure element exists on play
 export class RoomPage implements OnInit {
     public readonly instantsAvailable = ['thumbs-up', 'thumbs-down'];
     public instants: IInstant[] = [];
+    public users: IUser[] = [];
+
     public expandables: { [key: string]: boolean } = {
         users: false,
         polls: false,
@@ -35,7 +42,12 @@ export class RoomPage implements OnInit {
         private vimeet: VimeetServerService
     ) {
         this.vimeet.instant.subscribe((msg: IMessage) => {
-            this.showInstant(msg.object);
+            if (typeof msg.object === 'string') {
+                this.showInstant(msg.object);
+            }
+        });
+        this.vimeet.users.subscribe((users: IUser[]) => {
+            this.users = users;
         });
     }
 

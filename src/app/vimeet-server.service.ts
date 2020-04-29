@@ -5,14 +5,22 @@ import { NavController } from '@ionic/angular';
 import { environment } from 'src/environments/environment';
 
 export interface IMessage {
-    type: string;
+    type?: string;
     owner_id?: number;
     owner_name?: string;
-    object?: string;
-    name?: string;
-    elevated?: boolean;
-    connected?: any[];
+    object?: string | object;
+    joined?: any[];
     raised?: any[];
+}
+
+interface IUser {
+    name: string;
+    elevated: boolean;
+    id: number;
+}
+
+interface IUserInput {
+    [key: number]: IUser;
 }
 
 @Injectable({
@@ -20,13 +28,12 @@ export interface IMessage {
 })
 export class VimeetServerService {
     public messages: BehaviorSubject<IMessage>;
-    public users: BehaviorSubject<IMessage[]>;
+    public users: BehaviorSubject<IUser[]>;
     public objects: BehaviorSubject<IMessage[]>;
     public instant: BehaviorSubject<IMessage>;
 
     private ws: WebSocketSubject<unknown>;
     private isConnected: BehaviorSubject<boolean>;
-    private knownTypes = ['all', 'instant'];
 
     constructor(private navCtl: NavController) {
         this.isConnected = new BehaviorSubject<boolean>(false);
@@ -37,6 +44,8 @@ export class VimeetServerService {
                 this.navCtl.navigateBack('/join');
             }
         });
+        this.users = new BehaviorSubject([]);
+        this.objects = new BehaviorSubject([]);
         this.instant = new BehaviorSubject({ type: 'init-dummy' });
     }
 
@@ -50,16 +59,43 @@ export class VimeetServerService {
         this.ws.subscribe(
             (msg: IMessage) => {
                 this.isConnected.next(true);
-                if (this.knownTypes.some((elem) => elem === msg.type)) {
-                    switch (msg.type) {
-                        case 'instant':
-                            if (msg.object) {
-                                this.instant.next(msg);
+                switch (msg.type) {
+                    case 'all':
+                        if (msg.joined && msg.raised) {
+                            const input = msg.joined as IUserInput;
+                            const users = [];
+                            for (const key of Object.keys(input)) {
+                                const id = Number(key);
+                                users.push(this.transformUser(id, input[id]));
                             }
-                            break;
-                        default:
-                            break;
-                    }
+                            users.sort(this.sortIUser);
+                            this.users.next(users);
+
+                            this.objects.next(msg.raised);
+                        }
+                        break;
+                    case 'instant':
+                        if (msg.object) {
+                            this.instant.next(msg);
+                        }
+                        break;
+                    case 'joined':
+                        if (msg.object && typeof msg.object === 'object') {
+                            const obj = msg.object;
+                            if (
+                                'name' in obj &&
+                                'id' in obj &&
+                                'elevated' in obj
+                            ) {
+                                const users = this.getCopy(this.users);
+                                users.push(msg.object as IUser);
+                                users.sort(this.sortIUser);
+                                this.users.next(users);
+                            }
+                        }
+                        break;
+                    default:
+                        break;
                 }
             },
             (error) => {
@@ -78,5 +114,17 @@ export class VimeetServerService {
 
     private sendMessage(msg: any) {
         this.ws.next(msg);
+    }
+
+    private transformUser(key: number, value: IUser) {
+        return { id: key, ...value };
+    }
+
+    private getCopy<T>(subject: BehaviorSubject<T>): T {
+        return JSON.parse(JSON.stringify(subject.getValue())) as T;
+    }
+
+    private sortIUser(a: IUser, b: IUser) {
+        return a.name.localeCompare(b.name);
     }
 }

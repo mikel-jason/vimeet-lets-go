@@ -6,9 +6,13 @@ import { environment } from 'src/environments/environment';
 
 export interface IMessage {
     type: string;
-    owner_id: number;
-    owner_name: string;
-    object: string;
+    owner_id?: number;
+    owner_name?: string;
+    object?: string;
+    name?: string;
+    elevated?: boolean;
+    connected?: any[];
+    raised?: any[];
 }
 
 @Injectable({
@@ -16,6 +20,10 @@ export interface IMessage {
 })
 export class VimeetServerService {
     public messages: BehaviorSubject<IMessage>;
+    public users: BehaviorSubject<IMessage[]>;
+    public objects: BehaviorSubject<IMessage[]>;
+    public instant: BehaviorSubject<IMessage>;
+
     private ws: WebSocketSubject<unknown>;
     private isConnected: BehaviorSubject<boolean>;
     private knownTypes = ['all', 'instant'];
@@ -29,6 +37,7 @@ export class VimeetServerService {
                 this.navCtl.navigateBack('/join');
             }
         });
+        this.instant = new BehaviorSubject({ type: 'init-dummy' });
     }
 
     public connect(username: string, room: string) {
@@ -42,10 +51,14 @@ export class VimeetServerService {
             (msg: IMessage) => {
                 this.isConnected.next(true);
                 if (this.knownTypes.some((elem) => elem === msg.type)) {
-                    if (!this.messages) {
-                        this.messages = new BehaviorSubject<IMessage>(msg);
-                    } else {
-                        this.messages.next(msg);
+                    switch (msg.type) {
+                        case 'instant':
+                            if (msg.object) {
+                                this.instant.next(msg);
+                            }
+                            break;
+                        default:
+                            break;
                     }
                 }
             },

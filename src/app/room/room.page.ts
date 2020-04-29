@@ -34,16 +34,8 @@ export class RoomPage implements OnInit {
         private platform: Platform,
         private vimeet: VimeetServerService
     ) {
-        this.vimeet.messages.subscribe((msg: IMessage) => {
-            console.log('Got new message incoming!');
-            switch (msg.type) {
-                case 'instant':
-                    this.showInstant(msg.object);
-                    break;
-                default:
-                    console.log(msg);
-                    break;
-            }
+        this.vimeet.instant.subscribe((msg: IMessage) => {
+            this.showInstant(msg.object);
         });
     }
 
@@ -54,6 +46,9 @@ export class RoomPage implements OnInit {
     }
 
     private showInstant(instant: string) {
+        if (!instant) {
+            return;
+        }
         const uuid = 'instant-' + uuidv4(); // css ids have to start with a letter, uuid can have number as first char.
         this.instants.push({
             icon: instant,

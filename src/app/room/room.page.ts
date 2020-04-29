@@ -3,7 +3,11 @@ import { createAnimation } from '@ionic/core';
 import { Platform } from '@ionic/angular';
 
 import { v4 as uuidv4 } from 'uuid';
-import { VimeetServerService, IMessage } from '../vimeet-server.service';
+import {
+    VimeetServerService,
+    IMessage,
+    IObject,
+} from '../vimeet-server.service';
 
 interface IInstant {
     icon: string;
@@ -28,6 +32,7 @@ export class RoomPage implements OnInit {
     public readonly instantsAvailable = ['thumbs-up', 'thumbs-down'];
     public instants: IInstant[] = [];
     public users: IUser[] = [];
+    public objects: IObject[] = [];
 
     public expandables: { [key: string]: boolean } = {
         users: false,
@@ -48,6 +53,9 @@ export class RoomPage implements OnInit {
         });
         this.vimeet.users.subscribe((users: IUser[]) => {
             this.users = users;
+        });
+        this.vimeet.objects.subscribe((objects: IObject[]) => {
+            this.objects = objects;
         });
     }
 

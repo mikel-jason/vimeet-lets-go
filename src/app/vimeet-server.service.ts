@@ -11,6 +11,7 @@ export interface IMessage {
     object?: string | object;
     joined?: any[];
     raised?: any[];
+    elevated?: boolean;
 }
 
 interface IUser {
@@ -23,13 +24,20 @@ interface IUserInput {
     [key: number]: IUser;
 }
 
+export interface IObject {
+    object: string;
+    owner_id: number;
+    owner_name: string;
+    elevated: boolean;
+}
+
 @Injectable({
     providedIn: 'root',
 })
 export class VimeetServerService {
     public messages: BehaviorSubject<IMessage>;
     public users: BehaviorSubject<IUser[]>;
-    public objects: BehaviorSubject<IMessage[]>;
+    public objects: BehaviorSubject<IObject[]>;
     public instant: BehaviorSubject<IMessage>;
 
     private ws: WebSocketSubject<unknown>;
@@ -91,6 +99,38 @@ export class VimeetServerService {
                                 users.push(msg.object as IUser);
                                 users.sort(this.sortIUser);
                                 this.users.next(users);
+                            }
+                        }
+                        break;
+                    case 'raised':
+                        if (msg.object && typeof msg.object === 'string') {
+                            if (
+                                'owner_name' in msg &&
+                                'owner_id' in msg &&
+                                'elevated' in msg
+                            ) {
+                                const objects = this.objects.getValue();
+                                objects.push(msg as IObject);
+                            }
+                        }
+                        break;
+                    case 'lower':
+                        if (msg.object && typeof msg.object === 'string') {
+                            if (
+                                'owner_name' in msg &&
+                                'owner_id' in msg &&
+                                'elevated' in msg
+                            ) {
+                                const objects = this.objects.getValue();
+                                this.objects.next(
+                                    objects.filter(
+                                        (obj) =>
+                                            !(
+                                                obj.owner_id === msg.owner_id &&
+                                                obj.object === msg.object
+                                            )
+                                    )
+                                );
                             }
                         }
                         break;

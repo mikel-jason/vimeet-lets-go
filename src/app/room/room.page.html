@@ -1,29 +1,73 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Vimeet Let's Go!</ion-title>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-title>Vimeet Let's Go!</ion-title>
+    </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-fab vertical="bottom" horizontal="start" slot="fixed">
-    <ion-fab-button>
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-    <ion-fab-list side="top">
-      <ion-fab-button
-        *ngFor="let instant of instantsAvailable"
-        (click)="sendInstant(instant)"
-        ><ion-icon name="{{instant}}-outline"></ion-icon
-      ></ion-fab-button>
-    </ion-fab-list>
-  </ion-fab>
-  <div id="instants-start">
-    <ion-icon
-      *ngFor="let instant of instants"
-      name="{{instant.icon}}"
-      id="{{instant.uuid}}"
-      class="{{instant.uuid}}"
-      [ngStyle]="{'margin-left.px': instant.leftOffset}"
-    ></ion-icon>
-  </div>
+<ion-content #main>
+    <ion-fab vertical="bottom" horizontal="start" slot="fixed">
+        <ion-fab-button>
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+        <ion-fab-list side="top">
+            <ion-fab-button
+                *ngFor="let instant of instantsAvailable"
+                (click)="sendInstant(instant)"
+                ><ion-icon name="{{instant}}-outline"></ion-icon
+            ></ion-fab-button>
+        </ion-fab-list>
+    </ion-fab>
+    <div id="instants-start">
+        <ion-icon
+            *ngFor="let instant of instants"
+            name="{{instant.icon}}"
+            id="{{instant.uuid}}"
+            class="{{instant.uuid}}"
+            [ngStyle]="{'margin-left.px': instant.leftOffset}"
+        ></ion-icon>
+    </div>
+    <ion-card>
+        <ion-card-header (click)="expandItem('users')">
+            <ion-card-title>Users</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+            <app-expandable [expandHeight]="expandHeight" [expanded]="expandables.users">
+                Users go here
+            </app-expandable>
+        </ion-card-content>
+    </ion-card>
+    <ion-card>
+        <ion-card-header (click)="expandItem('polls')">
+            <ion-card-title>Polls</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+            <app-expandable [expandHeight]="expandHeight" [expanded]="expandables.polls">
+                Polls go here
+            </app-expandable>
+        </ion-card-content>
+    </ion-card>
+    <ion-card>
+        <ion-card-header (click)="expandItem('objects')">
+            <ion-card-title>Objects</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+            <app-expandable [expandHeight]="expandHeight" [expanded]="expandables.objects">
+                Objects go here
+            </app-expandable>
+        </ion-card-content>
+    </ion-card>
+    <ion-card>
+        <ion-card-header (click)="expandItem('chat')">
+            <ion-card-title>Chat</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+            <app-expandable [expandHeight]="expandHeight" [expanded]="expandables.chat">
+                Chat goes here
+            </app-expandable>
+        </ion-card-content>
+    </ion-card>
 </ion-content>

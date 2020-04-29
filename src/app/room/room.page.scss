@@ -8,4 +8,9 @@
     opacity: 0;
     position: absolute;
     overflow-y: hidden;
+    z-index: 999999;
+}
+
+ion-card-header {
+    height: 40px;
 }

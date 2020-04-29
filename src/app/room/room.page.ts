@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { createAnimation } from '@ionic/core';
 import { Platform } from '@ionic/angular';
 
@@ -22,6 +22,13 @@ const ANIMATION_OFFSET = 200; // ms, offset to make sure element exists on play
 export class RoomPage implements OnInit {
     public readonly instantsAvailable = ['thumbs-up', 'thumbs-down'];
     public instants: IInstant[] = [];
+    public expandables: { [key: string]: boolean } = {
+        users: false,
+        polls: false,
+        objects: false,
+        chat: false,
+    };
+    public expandHeight = 100; // init value random
 
     constructor(
         private platform: Platform,
@@ -105,5 +112,19 @@ export class RoomPage implements OnInit {
                     opacity: '0',
                 },
             ]);
+    }
+
+    expandItem(expandable: string): void {
+        this.expandables[expandable] = !this.expandables[expandable];
+
+        const numExpanded = Object.values(this.expandables).filter((ex) => ex)
+            .length;
+        const height =
+            (window.innerHeight -
+                60 -
+                60 -
+                70 * Object.values(this.expandables).length) /
+            (numExpanded ? numExpanded : 1);
+        this.expandHeight = height;
     }
 }

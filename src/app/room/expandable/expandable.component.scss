@@ -1,0 +1,11 @@
+.expand-wrapper {
+    --animation-time: 0.4s;
+    transition: height var(--animation-time) ease-in-out;
+    overflow-y: auto;
+    height: auto;
+}
+
+.collapsed {
+    height: 0 !important;
+    overflow-y: hidden;
+}

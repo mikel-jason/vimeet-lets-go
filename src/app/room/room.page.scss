@@ -15,7 +15,25 @@ ion-card-header {
     height: 40px;
 }
 
-ion-text.user,
-ion-text.object {
+ion-text.user {
     display: block;
+}
+
+.vimeet-fab {
+    width: calc(70vw / 2);
+}
+
+.vimeet-fab-text {
+    --border-radius: 7px;
+}
+
+.vimeet-object {
+    overflow-x: hidden;
+    white-space: nowrap;
+}
+
+.vimeet-object .vimeet-object-icon {
+    width: 1.2em;
+    display: inline-block;
+    vertical-align: middle;
 }

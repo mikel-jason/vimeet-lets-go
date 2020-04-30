@@ -6,15 +6,32 @@
 
 <ion-content #main>
     <ion-fab vertical="bottom" horizontal="start" slot="fixed">
-        <ion-fab-button>
-            <ion-icon name="add"></ion-icon>
+        <ion-fab-button class="vimeet-fab vimeet-fab-text">
+            Instants
         </ion-fab-button>
-        <ion-fab-list side="top">
+        <ion-fab-list side="top" class="vimeet-fab">
             <ion-fab-button
                 *ngFor="let instant of instantsAvailable"
                 (click)="sendInstant(instant)"
                 ><ion-icon name="{{instant}}-outline"></ion-icon
             ></ion-fab-button>
+        </ion-fab-list>
+    </ion-fab>
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button class="vimeet-fab vimeet-fab-text">
+            Objects
+        </ion-fab-button>
+        <ion-fab-list side="top">
+            <ion-fab-button
+                class="vimeet-fab vimeet-fab-text"
+                *ngFor="let objectDefinition of objectDefinitions"
+                (click)="raise(objectDefinition.object)"
+                ><span *ngIf="platform.width() >= 450"
+                    >{{objectDefinition.listText}}</span
+                ><span *ngIf="platform.width() < 450"
+                    >{{objectDefinition.shortListText}}</span
+                ></ion-fab-button
+            >
         </ion-fab-list>
     </ion-fab>
     <div id="instants-start">
@@ -32,8 +49,13 @@
         </ion-card-header>
 
         <ion-card-content>
-            <app-expandable [expandHeight]="expandHeight" [expanded]="expandables.users">
-                <ion-text *ngFor="let user of users" class="user">{{user.name}}</ion-text>
+            <app-expandable
+                [expandHeight]="expandHeight"
+                [expanded]="expandables.users"
+            >
+                <ion-text *ngFor="let user of users" class="user"
+                    >{{user.name}}</ion-text
+                >
             </app-expandable>
         </ion-card-content>
     </ion-card>
@@ -54,8 +76,19 @@
         </ion-card-header>
 
         <ion-card-content>
-            <app-expandable [expandHeight]="expandHeight" [expanded]="expandables.objects">
-                <ion-text *ngFor="let object of objects" class="object">{{object.object}} (by {{object.owner_name}})</ion-text>
+            <app-expandable
+                [expandHeight]="expandHeight"
+                [expanded]="expandables.objects"
+            >
+                <div *ngFor="let object of objects" class="vimeet-object">
+                    <span class="vimeet-object-icon"
+                        ><ion-icon
+                            *ngIf="object.fromSelf"
+                            name="close-circle-outline"
+                            (click)='lower(object.object)' 
+                        ></ion-icon></span
+                    ><ion-text>{{object.text}}</ion-text>
+                </div>
             </app-expandable>
         </ion-card-content>
     </ion-card>

@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { createAnimation } from '@ionic/core';
 import { Platform } from '@ionic/angular';
 
@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import {
     VimeetServerService,
     IMessage,
-    IObject,
+    IObject as IObjectInput,
 } from '../vimeet-server.service';
 
 interface IInstant {
@@ -18,6 +18,19 @@ interface IInstant {
 interface IUser {
     name: string;
     elevated: boolean;
+}
+
+interface IObjectDefinition {
+    getButtonText: (name: string) => string;
+    listText: string;
+    shortListText: string;
+    object: string;
+}
+
+interface IObject {
+    text: string;
+    fromSelf: boolean;
+    object: string;
 }
 
 const ANIMATION_DURATION = 3000; // ms
@@ -34,6 +47,39 @@ export class RoomPage implements OnInit {
     public users: IUser[] = [];
     public objects: IObject[] = [];
 
+    public objectDefinitions: IObjectDefinition[] = [
+        {
+            object: 'say something',
+            listText: 'I want to say something',
+            shortListText: 'Say sth.!',
+            getButtonText: (name: string) => `${name} wants to say something.`,
+        },
+        {
+            object: 'ready',
+            listText: 'I am ready',
+            shortListText: 'Ready!',
+            getButtonText: (name: string) => `${name} is ready.`,
+        },
+        {
+            object: 'faster',
+            listText: 'I want to go faster',
+            shortListText: 'Faster!',
+            getButtonText: (name: string) => `${name} wants to go faster.`,
+        },
+        {
+            object: 'slower',
+            listText: 'I want to go slower',
+            shortListText: 'Slower!',
+            getButtonText: (name: string) => `${name} wants to go slower.`,
+        },
+        {
+            object: 'break',
+            listText: 'I need a break',
+            shortListText: 'Break!',
+            getButtonText: (name: string) => `${name} needs a break.`,
+        },
+    ];
+
     public expandables: { [key: string]: boolean } = {
         users: false,
         polls: false,
@@ -43,7 +89,7 @@ export class RoomPage implements OnInit {
     public expandHeight = 100; // init value random
 
     constructor(
-        private platform: Platform,
+        public platform: Platform,
         private vimeet: VimeetServerService
     ) {
         this.vimeet.instant.subscribe((msg: IMessage) => {
@@ -54,8 +100,17 @@ export class RoomPage implements OnInit {
         this.vimeet.users.subscribe((users: IUser[]) => {
             this.users = users;
         });
-        this.vimeet.objects.subscribe((objects: IObject[]) => {
-            this.objects = objects;
+        this.vimeet.objects.subscribe((objs: IObjectInput[]) => {
+            this.objects = objs.map((obj) => {
+                const fun = this.objectDefinitions.filter(
+                    (def) => def.object === obj.object
+                )[0];
+                return {
+                    text: fun.getButtonText(obj.owner_name),
+                    fromSelf: obj.owner_id === this.vimeet.selfId,
+                    object: obj.object,
+                };
+            });
         });
     }
 
@@ -63,6 +118,14 @@ export class RoomPage implements OnInit {
 
     public sendInstant(instant: string) {
         this.vimeet.sendInstant(instant);
+    }
+
+    public raise(object: string) {
+        this.vimeet.raiseObject(object);
+    }
+
+    public lower(object: string) {
+        this.vimeet.lowerObject(object);
     }
 
     private showInstant(instant: string) {

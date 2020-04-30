@@ -12,6 +12,7 @@ export interface IMessage {
     joined?: any[];
     raised?: any[];
     elevated?: boolean;
+    id?: number;
 }
 
 interface IUser {
@@ -39,6 +40,7 @@ export class VimeetServerService {
     public users: BehaviorSubject<IUser[]>;
     public objects: BehaviorSubject<IObject[]>;
     public instant: BehaviorSubject<IMessage>;
+    public selfId: number;
 
     private ws: WebSocketSubject<unknown>;
     private isConnected: BehaviorSubject<boolean>;
@@ -68,6 +70,9 @@ export class VimeetServerService {
             (msg: IMessage) => {
                 this.isConnected.next(true);
                 switch (msg.type) {
+                    case 'self':
+                        this.selfId = msg.id;
+                        break;
                     case 'all':
                         if (msg.joined && msg.raised) {
                             const input = msg.joined as IUserInput;
@@ -111,6 +116,7 @@ export class VimeetServerService {
                             ) {
                                 const objects = this.objects.getValue();
                                 objects.push(msg as IObject);
+                                this.objects.next(objects);
                             }
                         }
                         break;
@@ -149,6 +155,20 @@ export class VimeetServerService {
         this.sendMessage({
             type: 'instant',
             instantobject: value,
+        });
+    }
+
+    public raiseObject(object: string) {
+        this.ws.next({
+            type: 'raise',
+            raiseobject: object,
+        });
+    }
+
+    public lowerObject(object: string) {
+        this.ws.next({
+            type: 'lower',
+            lowerobject: object,
         });
     }
 

@@ -10,8 +10,8 @@
     "test": "ng test",
     "lint": "ng lint --fix; npm run prettier:write",
     "e2e": "ng e2e",
-    "prettier:list": "prettier --list-different \"./{e2e,src}/**/*.{scss,ts}\"",
-    "prettier:write": "prettier --write \"./{e2e,src}/**/*.{scss,ts}\""
+    "prettier:list": "prettier --list-different \"./{e2e,src}/**/*.{scss,ts,html}\"",
+    "prettier:write": "prettier --write \"./{e2e,src}/**/*.{scss,ts,html}\""
   },
   "husky": {
     "hooks": {

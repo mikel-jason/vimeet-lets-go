@@ -65,7 +65,10 @@
         </ion-card-header>
 
         <ion-card-content>
-            <app-expandable [expandHeight]="expandHeight" [expanded]="expandables.polls">
+            <app-expandable
+                [expandHeight]="expandHeight"
+                [expanded]="expandables.polls"
+            >
                 Polls go here
             </app-expandable>
         </ion-card-content>
@@ -85,7 +88,7 @@
                         ><ion-icon
                             *ngIf="object.fromSelf"
                             name="close-circle-outline"
-                            (click)='lower(object.object)' 
+                            (click)="lower(object.object)"
                         ></ion-icon></span
                     ><ion-text>{{object.text}}</ion-text>
                 </div>
@@ -98,7 +101,10 @@
         </ion-card-header>
 
         <ion-card-content>
-            <app-expandable [expandHeight]="expandHeight" [expanded]="expandables.chat">
+            <app-expandable
+                [expandHeight]="expandHeight"
+                [expanded]="expandables.chat"
+            >
                 Chat goes here
             </app-expandable>
         </ion-card-content>

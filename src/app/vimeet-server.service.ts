@@ -191,28 +191,28 @@ export class VimeetServerService {
     public sendInstant(value: string) {
         this.sendMessage({
             type: 'instant',
-            instantobject: { type: 'icon', value },
+            object: { type: 'icon', value },
         });
     }
 
     public sendChatMessage(message: string) {
         this.sendMessage({
             type: 'instant',
-            instantobject: { type: 'chat', value: message },
+            object: { type: 'chat', value: message },
         });
     }
 
     public raiseObject(object: string) {
         this.ws.next({
             type: 'raise',
-            raiseobject: object,
+            object,
         });
     }
 
     public lowerObject(object: string) {
         this.ws.next({
             type: 'lower',
-            lowerobject: object,
+            object,
         });
     }
 

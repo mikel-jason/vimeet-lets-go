@@ -7,6 +7,7 @@ import {
     VimeetServerService,
     IMessage,
     IObject as IObjectInput,
+    IChatMessage,
 } from '../vimeet-server.service';
 
 interface IInstant {
@@ -46,6 +47,8 @@ export class RoomPage implements OnInit {
     public instants: IInstant[] = [];
     public users: IUser[] = [];
     public objects: IObject[] = [];
+    public chatInput: string;
+    public chatMessages: IChatMessage[] = [];
 
     public objectDefinitions: IObjectDefinition[] = [
         {
@@ -87,6 +90,7 @@ export class RoomPage implements OnInit {
         chat: false,
     };
     public expandHeight = 100; // init value random
+    public chatInputOffset = 100; // init value random
 
     constructor(
         public platform: Platform,
@@ -112,6 +116,9 @@ export class RoomPage implements OnInit {
                 };
             });
         });
+        this.vimeet.chatMessage.subscribe((chatMessage) => {
+            this.chatMessages.push(chatMessage);
+        });
     }
 
     ngOnInit() {}
@@ -126,6 +133,13 @@ export class RoomPage implements OnInit {
 
     public lower(object: string) {
         this.vimeet.lowerObject(object);
+    }
+
+    public sendChatMessage() {
+        if (this.chatInput) {
+            this.vimeet.sendChatMessage(this.chatInput);
+            this.chatInput = '';
+        }
     }
 
     private showInstant(instant: string) {
@@ -204,5 +218,6 @@ export class RoomPage implements OnInit {
                 70 * Object.values(this.expandables).length) /
             (numExpanded ? numExpanded : 1);
         this.expandHeight = height;
+        this.chatInputOffset = height - 50;
     }
 }

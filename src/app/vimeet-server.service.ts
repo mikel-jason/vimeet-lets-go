@@ -32,6 +32,13 @@ export interface IObject {
     elevated: boolean;
 }
 
+export interface IChatMessage {
+    owner_name: string;
+    owner_id: number;
+    text: string;
+    elevated: boolean;
+}
+
 @Injectable({
     providedIn: 'root',
 })
@@ -40,6 +47,7 @@ export class VimeetServerService {
     public users: BehaviorSubject<IUser[]>;
     public objects: BehaviorSubject<IObject[]>;
     public instant: BehaviorSubject<IMessage>;
+    public chatMessage: BehaviorSubject<IChatMessage>;
     public selfId: number;
 
     private ws: WebSocketSubject<unknown>;
@@ -57,6 +65,12 @@ export class VimeetServerService {
         this.users = new BehaviorSubject([]);
         this.objects = new BehaviorSubject([]);
         this.instant = new BehaviorSubject({ type: 'init-dummy' });
+        this.chatMessage = new BehaviorSubject({
+            owner_name: 'Vimeet',
+            owner_id: 0,
+            text: 'Welcome to the chat!',
+            elevated: false,
+        });
     }
 
     public connect(username: string, room: string) {
@@ -88,8 +102,31 @@ export class VimeetServerService {
                         }
                         break;
                     case 'instant':
-                        if (msg.object) {
-                            this.instant.next(msg);
+                        if (
+                            msg.object &&
+                            typeof msg.object === 'object' &&
+                            msg.object.hasOwnProperty('type')
+                        ) {
+                            const typObj = msg.object as {
+                                type: string;
+                                value: string;
+                            };
+
+                            switch (typObj.type) {
+                                case 'icon':
+                                    this.instant.next({ object: typObj.value });
+                                    break;
+                                case 'chat':
+                                    this.chatMessage.next({
+                                        owner_name: msg.owner_name,
+                                        owner_id: msg.owner_id,
+                                        text: typObj.value,
+                                        elevated: msg.elevated,
+                                    });
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
                         break;
                     case 'joined':
@@ -154,7 +191,14 @@ export class VimeetServerService {
     public sendInstant(value: string) {
         this.sendMessage({
             type: 'instant',
-            instantobject: value,
+            instantobject: { type: 'icon', value },
+        });
+    }
+
+    public sendChatMessage(message: string) {
+        this.sendMessage({
+            type: 'instant',
+            instantobject: { type: 'chat', value: message },
         });
     }
 

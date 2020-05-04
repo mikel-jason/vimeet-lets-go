@@ -104,8 +104,29 @@
             <app-expandable
                 [expandHeight]="expandHeight"
                 [expanded]="expandables.chat"
+                style="overflow-y: hidden !important;"
             >
-                Chat goes here
+                <div
+                    [ngStyle]="{'height.px': chatInputOffset}"
+                    style="overflow-y: auto;"
+                >
+                    <ion-text
+                        *ngFor="let message of chatMessages"
+                        style="display: block;"
+                        ><b>{{message.owner_name}}: </b
+                        >{{message.text}}</ion-text
+                    >
+                </div>
+                <ion-item>
+                    <ion-input
+                        type="text"
+                        [(ngModel)]="chatInput"
+                        placeholder="Enter chat message"
+                    ></ion-input>
+                    <ion-button (click)="sendChatMessage()" item-end>
+                        Send
+                    </ion-button>
+                </ion-item>
             </app-expandable>
         </ion-card-content>
     </ion-card>

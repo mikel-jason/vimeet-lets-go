@@ -69,7 +69,13 @@
                 [expandHeight]="expandHeight"
                 [expanded]="expandables.polls"
             >
-                Polls go here
+                <app-poll
+                    *ngFor="let poll of polls"
+                    [title]="poll.object"
+                    [options]="poll.options"
+                    [votes]="poll.votes"
+                    [closed]="poll.closed"
+                ></app-poll>
             </app-expandable>
         </ion-card-content>
     </ion-card>

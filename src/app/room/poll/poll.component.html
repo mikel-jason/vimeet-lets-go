@@ -1,0 +1,17 @@
+<br />
+<div class="poll">
+    <p>
+        <b>{{ title }}</b
+        >&nbsp;<span *ngIf="closed">(closed)</span>
+    </p>
+    <span *ngIf="options.length > 0 && !closed"
+        >Please choose your answer:</span
+    >
+    <ul>
+        <li *ngFor="let option of options">
+            {{ option.polloptionobject }} ({{
+                calculate_votes_for_option(option.polloptionobject)
+            }})
+        </li>
+    </ul>
+</div>

@@ -34,6 +34,35 @@ interface IObject {
     object: string;
 }
 
+export interface IPoll {
+    object: string;
+    options: IPollOption[];
+    votes: IVote[];
+    closed: boolean;
+}
+
+export interface IPollOption {
+    polloptionobject: string;
+    pollobject: string;
+}
+
+export interface IVote {
+    userid: number;
+    username: string;
+    polloptionobject: string;
+    pollobject: string;
+}
+
+export interface IClosePoll {
+    object: string;
+}
+
+export interface IDeleteVote {
+    pollobject: string;
+    polloptionobject: string;
+    userid: string;
+}
+
 const ANIMATION_DURATION = 3000; // ms
 const ANIMATION_OFFSET = 200; // ms, offset to make sure element exists on play
 
@@ -49,6 +78,7 @@ export class RoomPage implements OnInit {
     public objects: IObject[] = [];
     public chatInput: string;
     public chatMessages: IChatMessage[] = [];
+    public polls: IPoll[] = [];
 
     public objectDefinitions: IObjectDefinition[] = [
         {
@@ -118,6 +148,9 @@ export class RoomPage implements OnInit {
         });
         this.vimeet.chatMessage.subscribe((chatMessage) => {
             this.chatMessages.push(chatMessage);
+        });
+        this.vimeet.polls.subscribe((polls: IPoll[]) => {
+            this.polls = polls;
         });
     }
 

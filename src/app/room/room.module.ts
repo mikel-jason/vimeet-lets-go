@@ -8,9 +8,10 @@ import { RoomPageRoutingModule } from './room-routing.module';
 
 import { RoomPage } from './room.page';
 import { ExpandableComponent } from './expandable/expandable.component';
+import { PollComponent } from './poll/poll.component';
 
 @NgModule({
     imports: [CommonModule, FormsModule, IonicModule, RoomPageRoutingModule],
-    declarations: [RoomPage, ExpandableComponent],
+    declarations: [RoomPage, ExpandableComponent, PollComponent],
 })
 export class RoomPageModule {}

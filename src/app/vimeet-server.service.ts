@@ -39,6 +39,40 @@ export interface IChatMessage {
     elevated: boolean;
 }
 
+export interface IPoll {
+    object: string;
+    options: IPollOption[];
+    votes: IVote[];
+    closed: boolean;
+}
+
+export interface IPollOption {
+    polloptionobject: string;
+    pollobject: string;
+}
+
+export interface IVote {
+    userid: number;
+    username: string;
+    polloptionobject: string;
+    pollobject: string;
+}
+
+export interface IClosePoll {
+    object: string;
+}
+
+export interface IDeleteVote {
+    pollobject: string;
+    polloptionobject: string;
+    userid: string;
+}
+
+export interface IError {
+    object: string;
+    description: string;
+}
+
 @Injectable({
     providedIn: 'root',
 })
@@ -48,6 +82,7 @@ export class VimeetServerService {
     public objects: BehaviorSubject<IObject[]>;
     public instant: BehaviorSubject<IMessage>;
     public chatMessage: BehaviorSubject<IChatMessage>;
+    public polls: BehaviorSubject<IPoll[]>;
     public selfId: number;
 
     private ws: WebSocketSubject<unknown>;
@@ -71,6 +106,7 @@ export class VimeetServerService {
             text: 'Welcome to the chat!',
             elevated: false,
         });
+        this.polls = new BehaviorSubject([]);
     }
 
     public connect(username: string, room: string) {
@@ -179,6 +215,88 @@ export class VimeetServerService {
                                 );
                             }
                         }
+                        break;
+                    case 'poll': {
+                        let temp_poll = msg as IPoll;
+
+                        const polls = this.polls.getValue();
+
+                        let new_poll = {
+                            object: temp_poll.object,
+                            options: [],
+                            votes: [],
+                            closed: false,
+                        };
+
+                        polls.push(new_poll);
+                        this.polls.next(polls);
+                        break;
+                    }
+                    case 'polloption': {
+                        let poll_option = msg as IPollOption;
+
+                        const polls = this.polls.getValue();
+                        for (let i = 0; i < polls.length; i++) {
+                            if (polls[i].object == poll_option.pollobject) {
+                                polls[i].options.push(poll_option);
+                                break;
+                            }
+                        }
+
+                        this.polls.next(polls);
+                        break;
+                    }
+                    case 'vote': {
+                        let poll_vote = msg as IVote;
+
+                        const polls = this.polls.getValue();
+                        for (let i = 0; i < polls.length; i++) {
+                            if (polls[i].object == poll_vote.pollobject) {
+                                polls[i].votes.push(poll_vote);
+                                break;
+                            }
+                        }
+
+                        this.polls.next(polls);
+                        break;
+                    }
+                    case 'pollclose': {
+                        let close = msg as IClosePoll;
+
+                        const polls = this.polls.getValue();
+                        for (let i = 0; i < polls.length; i++) {
+                            if (polls[i].object == close.object) {
+                                polls[i].closed = true;
+                                break;
+                            }
+                        }
+
+                        this.polls.next(polls);
+                        break;
+                    }
+                    case 'votedelete': {
+                        let delete_vote = msg as IDeleteVote;
+
+                        const polls = this.polls.getValue();
+                        for (let i = 0; i < polls.length; i++) {
+                            if (polls[i].object == delete_vote.pollobject) {
+                                let index = polls[i].votes.findIndex(
+                                    (vote, _, __) =>
+                                        vote.polloptionobject ==
+                                        delete_vote.polloptionobject
+                                );
+                                polls[i].votes.splice(index, 1);
+                                console.log(polls[i].votes);
+                                break;
+                            }
+                        }
+
+                        this.polls.next(polls);
+                        break;
+                    }
+                    case 'error':
+                        let error = msg as IError;
+                        alert(error.description);
                         break;
                     default:
                         break;

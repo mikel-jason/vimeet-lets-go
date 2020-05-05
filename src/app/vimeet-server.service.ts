@@ -84,6 +84,7 @@ export class VimeetServerService {
     public chatMessage: BehaviorSubject<IChatMessage>;
     public polls: BehaviorSubject<IPoll[]>;
     public selfId: number;
+    public selfElevated: BehaviorSubject<boolean>;
 
     private ws: WebSocketSubject<unknown>;
     private isConnected: BehaviorSubject<boolean>;
@@ -107,6 +108,7 @@ export class VimeetServerService {
             elevated: false,
         });
         this.polls = new BehaviorSubject([]);
+        this.selfElevated = new BehaviorSubject(false);
     }
 
     public connect(username: string, room: string) {
@@ -125,6 +127,7 @@ export class VimeetServerService {
                         if (typeof msg.object === 'number') {
                             this.selfId = msg.object;
                         }
+                        this.selfElevated.next(msg.elevated);
                         break;
                     case 'all':
                         if (msg.joined && msg.raised) {
@@ -298,6 +301,20 @@ export class VimeetServerService {
                         let error = msg as IError;
                         alert(error.description);
                         break;
+                    case 'elevated': // fall thru!
+                    case 'receded':
+                        if (msg.object === this.selfId) {
+                            this.selfElevated.next(msg.elevated);
+                        }
+
+                        const newUsers = this.users.getValue();
+                        newUsers.map((user) => {
+                            if (user.id === msg.object) {
+                                user.elevated = msg.elevated;
+                            }
+                        });
+                        this.users.next(newUsers);
+                        break;
                     default:
                         break;
                 }
@@ -334,6 +351,13 @@ export class VimeetServerService {
         this.ws.next({
             type: 'lower',
             object,
+        });
+    }
+
+    public changePermission(userId: number, elevated: boolean) {
+        this.ws.next({
+            type: elevated ? 'elevate' : 'recede',
+            object: userId,
         });
     }
 

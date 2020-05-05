@@ -19,6 +19,7 @@ interface IInstant {
 interface IUser {
     name: string;
     elevated: boolean;
+    id: number;
 }
 
 interface IObjectDefinition {
@@ -121,6 +122,7 @@ export class RoomPage implements OnInit {
     };
     public expandHeight = 100; // init value random
     public chatInputOffset = 100; // init value random
+    public selfElevated = false;
 
     constructor(
         public platform: Platform,
@@ -152,6 +154,9 @@ export class RoomPage implements OnInit {
         this.vimeet.polls.subscribe((polls: IPoll[]) => {
             this.polls = polls;
         });
+        this.vimeet.selfElevated.subscribe(
+            (elevated) => (this.selfElevated = elevated)
+        );
     }
 
     ngOnInit() {}
@@ -173,6 +178,10 @@ export class RoomPage implements OnInit {
             this.vimeet.sendChatMessage(this.chatInput);
             this.chatInput = '';
         }
+    }
+
+    public changePermission(userId: number, elevated: boolean) {
+        this.vimeet.changePermission(userId, elevated);
     }
 
     private showInstant(instant: string) {

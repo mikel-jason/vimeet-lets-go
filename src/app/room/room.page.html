@@ -53,9 +53,24 @@
                 [expandHeight]="expandHeight"
                 [expanded]="expandables.users"
             >
-                <ion-text *ngFor="let user of users" class="user"
-                    >{{user.name}}</ion-text
-                >
+                <div *ngFor="let user of users" class="vimeet-object">
+                    <span class="vimeet-object-icon" *ngIf="selfElevated"
+                        ><ion-icon
+                            *ngIf="!user.elevated"
+                            name="chevron-up-outline"
+                            (click)="changePermission(user.id, true)"
+                        ></ion-icon
+                        ><ion-icon
+                            *ngIf="user.elevated"
+                            name="chevron-down-outline"
+                            (click)="changePermission(user.id, false)"
+                        ></ion-icon></span
+                    ><ion-text
+                        >{{user.name}}<span *ngIf="user.elevated">
+                            (Host)</span
+                        ></ion-text
+                    >
+                </div>
             </app-expandable>
         </ion-card-content>
     </ion-card>

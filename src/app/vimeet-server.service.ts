@@ -8,7 +8,7 @@ export interface IMessage {
     type?: string;
     owner_id?: number;
     owner_name?: string;
-    object?: string | object;
+    object?: string | object | number;
     joined?: any[];
     raised?: any[];
     elevated?: boolean;
@@ -82,10 +82,13 @@ export class VimeetServerService {
 
         this.ws.subscribe(
             (msg: IMessage) => {
+                console.log(msg);
                 this.isConnected.next(true);
                 switch (msg.type) {
-                    case 'self':
-                        this.selfId = msg.id;
+                    case 'selfstatus':
+                        if (typeof msg.object === 'number') {
+                            this.selfId = msg.object;
+                        }
                         break;
                     case 'all':
                         if (msg.joined && msg.raised) {

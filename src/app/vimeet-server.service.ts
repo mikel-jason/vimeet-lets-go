@@ -112,8 +112,9 @@ export class VimeetServerService {
     }
 
     public connect(username: string, room: string) {
+        const protocol = document.URL.startsWith('http:') ? 'ws' : 'wss';
         this.ws = webSocket(
-            `${environment.vimeet_server_websocket_protocol}://${
+            `${protocol}://${
                 environment.vimeet_server_base_uri
             }/ws/${encodeURIComponent(room)}/${encodeURIComponent(username)}/`
         );

@@ -5,7 +5,6 @@
 export const environment = {
     production: false,
     vimeet_server_base_uri: 'localhost:8080',
-    vimeet_server_websocket_protocol: 'ws',
 };
 /*
  * For easier debugging in development mode, you can import the following file

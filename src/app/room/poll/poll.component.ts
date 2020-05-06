@@ -15,7 +15,7 @@ export class PollComponent implements OnInit {
 
     ngOnInit() {}
 
-    private calculate_votes_for_option(option_title: string) {
+    public calculate_votes_for_option(option_title: string) {
         return this.votes.filter(
             (vote) => vote.polloptionobject == option_title
         ).length;

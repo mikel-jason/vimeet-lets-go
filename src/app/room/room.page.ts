@@ -78,6 +78,7 @@ export class RoomPage implements OnInit {
     public users: IUser[] = [];
     public objects: IObject[] = [];
     public chatInput: string;
+    public pollTitle: string;
     public chatMessages: IChatMessage[] = [];
     public polls: IPoll[] = [];
 
@@ -182,6 +183,13 @@ export class RoomPage implements OnInit {
 
     public changePermission(userId: number, elevated: boolean) {
         this.vimeet.changePermission(userId, elevated);
+    }
+
+    public createPoll() {
+        if (this.pollTitle) {
+            this.vimeet.createPoll(this.pollTitle);
+            this.pollTitle = '';
+        }
     }
 
     private showInstant(instant: string) {

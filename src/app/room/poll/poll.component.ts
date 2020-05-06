@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { VimeetServerService } from 'src/app/vimeet-server.service';
 
 @Component({
     selector: 'app-poll',
@@ -11,7 +12,10 @@ export class PollComponent implements OnInit {
     @Input() votes: any[];
     @Input() closed: boolean;
 
-    constructor() {}
+    add_option: boolean = false;
+    optionTitle: String;
+
+    constructor(private vimeet: VimeetServerService) {}
 
     ngOnInit() {}
 
@@ -19,5 +23,21 @@ export class PollComponent implements OnInit {
         return this.votes.filter(
             (vote) => vote.polloptionobject == option_title
         ).length;
+    }
+
+    public close() {
+        this.vimeet.closePoll(this.title);
+    }
+
+    public vote(option_title: String) {
+        if (!this.closed) this.vimeet.vote(this.title, option_title);
+    }
+
+    public addOption() {
+        if (this.optionTitle) {
+            if (!this.closed)
+                this.vimeet.addOption(this.title, this.optionTitle);
+            this.optionTitle = '';
+        }
     }
 }

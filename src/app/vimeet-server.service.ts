@@ -362,6 +362,44 @@ export class VimeetServerService {
         });
     }
 
+    public createPoll(poll_title: String) {
+        let object = {};
+        object['poll_title'] = poll_title;
+        this.ws.next({
+            type: 'poll',
+            object,
+        });
+    }
+
+    public closePoll(poll_title: String) {
+        let object = {};
+        object['poll_title'] = poll_title;
+        this.ws.next({
+            type: 'closepoll',
+            object,
+        });
+    }
+
+    public vote(poll_title: String, poll_option_title: String) {
+        let object = {};
+        object['poll_title'] = poll_title;
+        object['poll_option_title'] = poll_option_title;
+        this.ws.next({
+            type: 'vote',
+            object,
+        });
+    }
+
+    public addOption(poll_title: String, poll_option_title: String) {
+        let object = {};
+        object['poll_title'] = poll_title;
+        object['poll_option_title'] = poll_option_title;
+        this.ws.next({
+            type: 'polloption',
+            object,
+        });
+    }
+
     private sendMessage(msg: any) {
         this.ws.next(msg);
     }

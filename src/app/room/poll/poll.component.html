@@ -1,14 +1,47 @@
 <br />
 <div class="poll">
     <p>
-        <b>{{ title }}</b
-        >&nbsp;<span *ngIf="closed">(closed)</span>
+        <ion-icon
+            *ngIf="!closed"
+            name="lock-open-outline"
+            (click)="close()"
+            title="close poll"
+        ></ion-icon>
+        <ion-icon *ngIf="closed" name="lock-closed-outline"></ion-icon>
+        &nbsp;
+        <b>{{ title }}</b>
+        &nbsp;
+        <span
+            *ngIf="!closed"
+            name="add-outline"
+            title="add option"
+            (click)="add_option = !add_option"
+            >+</span
+        >
     </p>
+    <table *ngIf="add_option && !closed">
+        <tr>
+            <td>
+                <ion-input
+                    type="text"
+                    [(ngModel)]="optionTitle"
+                    placeholder="Option Title"
+                ></ion-input>
+            </td>
+            <td>
+                <ion-button size="small" (click)="addOption()">send</ion-button>
+            </td>
+        </tr>
+    </table>
     <span *ngIf="options.length > 0 && !closed"
         >Please choose your answer:</span
     >
     <ul>
-        <li *ngFor="let option of options">
+        <li
+            *ngFor="let option of options"
+            [class.voteable]="!closed"
+            (click)="vote(option.polloptionobject)"
+        >
             {{ option.polloptionobject }} ({{
                 calculate_votes_for_option(option.polloptionobject)
             }})

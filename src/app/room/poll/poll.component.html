@@ -39,12 +39,28 @@
     <ul>
         <li
             *ngFor="let option of options"
-            [class.voteable]="!closed"
             (click)="vote(option.polloptionobject)"
         >
-            {{ option.polloptionobject }} ({{
-                calculate_votes_for_option(option.polloptionobject)
-            }})
+            <span [class.voteable]="!closed">
+                {{ option.polloptionobject }} ({{
+                    calculate_votes_for_option(option.polloptionobject)
+                }})</span
+            >&nbsp;<span
+                *ngIf="
+                    selfElevated &&
+                    calculate_votes_for_option(option.polloptionobject) > 0
+                "
+                >→
+                <span *ngFor="let vote of votes">
+                    <span
+                        *ngIf="
+                            vote.pollobject == title &&
+                            vote.polloptionobject == option.polloptionobject
+                        "
+                        >{{ vote.username }},
+                    </span>
+                </span></span
+            >
         </li>
     </ul>
 </div>

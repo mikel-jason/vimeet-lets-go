@@ -15,7 +15,13 @@ export class PollComponent implements OnInit {
     add_option: boolean = false;
     optionTitle: String;
 
-    constructor(private vimeet: VimeetServerService) {}
+    selfElevated: boolean = false;
+
+    constructor(private vimeet: VimeetServerService) {
+        this.vimeet.selfElevated.subscribe(
+            (elevated) => (this.selfElevated = elevated)
+        );
+    }
 
     ngOnInit() {}
 
@@ -26,7 +32,7 @@ export class PollComponent implements OnInit {
     }
 
     public close() {
-        this.vimeet.closePoll(this.title);
+        if (this.selfElevated) this.vimeet.closePoll(this.title);
     }
 
     public vote(option_title: String) {

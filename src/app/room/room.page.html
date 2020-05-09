@@ -17,7 +17,12 @@
             ></ion-fab-button>
         </ion-fab-list>
     </ion-fab>
-    <ion-fab vertical="bottom" horizontal="center" slot="fixed">
+    <!-- <ion-fab
+        *ngIf="selfElevated"
+        vertical="bottom"
+        horizontal="center"
+        slot="fixed"
+    >
         <ion-fab-button class="vimeet-fab vimeet-fab-text">
             Create Poll
         </ion-fab-button>
@@ -39,7 +44,7 @@
                 ></ion-input>
             </ion-fab-button>
         </ion-fab-list>
-    </ion-fab>
+    </ion-fab> -->
     <ion-fab vertical="bottom" horizontal="end" slot="fixed">
         <ion-fab-button class="vimeet-fab vimeet-fab-text">
             Objects
@@ -107,6 +112,16 @@
                 [expandHeight]="expandHeight"
                 [expanded]="expandables.polls"
             >
+                <ion-item *ngIf="selfElevated">
+                    <ion-input
+                        type="text"
+                        [(ngModel)]="pollTitle"
+                        placeholder="Enter poll title"
+                    ></ion-input>
+                    <ion-button (click)="createPoll()" item-end>
+                        Create
+                    </ion-button>
+                </ion-item>
                 <app-poll
                     *ngFor="let poll of polls"
                     [title]="poll.object"

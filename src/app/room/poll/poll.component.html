@@ -12,14 +12,14 @@
         <b>{{ title }}</b>
         &nbsp;
         <span
-            *ngIf="!closed"
+            *ngIf="!closed && selfElevated"
             name="add-outline"
             title="add option"
             (click)="add_option = !add_option"
             >+</span
         >
     </p>
-    <table *ngIf="add_option && !closed">
+    <table *ngIf="add_option && !closed && selfElevated">
         <tr>
             <td>
                 <ion-input
